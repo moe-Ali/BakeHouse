@@ -5,7 +5,7 @@ pipeline {
         stage('develop') {
             steps {
                 echo "This is Develop stage"
-                echo ${build_number}
+                echo "${build_number}"
                 sh """
                     mkdir Mohamed_Ali
                 """

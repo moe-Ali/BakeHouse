@@ -27,6 +27,7 @@ pipeline {
                     rm -r Mohamed_Ali
                 """
             }
+        }
         stage('check'){
             steps{
                 echo 'This is Check stage'

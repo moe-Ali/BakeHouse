@@ -18,7 +18,7 @@ pipeline {
                 echo "This is push stage number ${BUILD_NUMBER}"
                 withCredentials([usernamePassword(credentialsId: 'iti-lab2-dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh """
-                    docker push ${USERNAME}/iti_lab-Bakehouse:${BUILD_NUMBER}
+                    docker push ${USERNAME}/iti_lab-bakehouse:${BUILD_NUMBER}
                     export LAST_PUSH_NUMBER= ${BUILD_NUMBER}
                 """
                 }

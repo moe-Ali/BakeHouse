@@ -1,39 +1,20 @@
+
 pipeline {
-    agent any
+    agent {label: 'iti-lab2'}
 
     stages {
-        stage('develop') {
+        stage('Deploy') {
             steps {
-                echo "This is Develop stage"
-                echo "${build_number}"
+                echo "This is deploy stage number ${BUILD_NUMBER}"
+                withCredentials([file(credentialsId: 'iti-lab2-kubeconfig',variable: 'KUBECONFIGFILE')]) {
                 sh """
-                    mkdir Mohamed_Ali
+                    export BUILD_NUMBER=\$LAST_PUSH_NUMBER
+                    mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
+                    cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
+                    rm -f Deployment/deploy.yaml.tmp
+                    kubectl apply -f Deplyoment --kubeconfig ${KUBECONFIGFILE}
                 """
-            }
-        }
-        stage('test') {
-            steps {
-                echo 'This is Test stage'
-                sh """
-                    ls -la
-                    
-                """
-            }
-        }
-        stage('destroy') {
-            steps {
-                echo 'This is Destroy stage'
-                sh """
-                    rm -r Mohamed_Ali
-                """
-            }
-        }
-        stage('check'){
-            steps{
-                echo 'This is Check stage'
-                sh """
-                ls
-                """
+                }
             }
         }
         }

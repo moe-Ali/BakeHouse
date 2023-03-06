@@ -2,23 +2,16 @@ pipeline {
     agent {label: 'iti-lab2'}
 
     stages {
-        stage('build') {
+        stage('Deploy') {
             steps {
-                echo "This is build stage number ${BUILD_NUMBER}"
-                withCredentials([usernamePassword(credentialsId: 'iti-lab2-dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                echo "This is deploy stage number ${BUILD_NUMBER}"
+                withCredentials([file(credentialsId: 'iti-lab2-kubeconfig',variable: 'KUBECONFIGFILE')]) {
                 sh """
-                    docker login --username ${USERNAME} --password ${PASSWORD}
-                    docker build -t ${USERNAME}/iti_lab-Bakehouse:${BUILD_NUMBER} .
-                """
-                }
-            }
-        }
-        stage('push') {
-            steps {
-                echo "This is push stage number ${BUILD_NUMBER}"
-                withCredentials([usernamePassword(credentialsId: 'iti-lab2-dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh """
-                    docker push ${USERNAME}/iti_lab-Bakehouse:${BUILD_NUMBER}
+                    export BUILD_NUMBER=\$LAST_PUSH_NUMBER
+                    mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
+                    cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
+                    rm -f Deployment/deploy.yaml.tmp
+                    kubectl apply -f Deplyoment --kubeconfig ${KUBECONFIGFILE}
                 """
                 }
             }

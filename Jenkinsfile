@@ -1,39 +1,26 @@
 pipeline {
-    agent any
+    agent {label: 'iti-lab2'}
 
     stages {
-        stage('develop') {
+        stage('build') {
             steps {
-                echo "This is Develop stage"
-                echo "${build_number}"
+                echo "This is build stage number ${BUILD_NUMBER}"
+                withCredentials([usernamePassword(credentialsId: 'iti-lab2-dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh """
-                    mkdir Mohamed_Ali
+                    docker login --username ${USERNAME} --password ${PASSWORD}
+                    docker build -t ${USERNAME}/iti_lab-Bakehouse:${BUILD_NUMBER} .
                 """
+                }
             }
         }
-        stage('test') {
+        stage('push') {
             steps {
-                echo 'This is Test stage'
+                echo "This is push stage number ${BUILD_NUMBER}"
+                withCredentials([usernamePassword(credentialsId: 'iti-lab2-dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh """
-                    ls -la
-                    
+                    docker push ${USERNAME}/iti_lab-Bakehouse:${BUILD_NUMBER}
                 """
-            }
-        }
-        stage('destroy') {
-            steps {
-                echo 'This is Destroy stage'
-                sh """
-                    rm -r Mohamed_Ali
-                """
-            }
-        }
-        stage('check'){
-            steps{
-                echo 'This is Check stage'
-                sh """
-                ls
-                """
+                }
             }
         }
         }

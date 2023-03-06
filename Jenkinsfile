@@ -1,6 +1,6 @@
 
 pipeline {
-    agent {label: 'iti-lab2'}
+    agent { label 'iti-lab2'}
 
     stages {
         stage('Deploy') {

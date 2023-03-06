@@ -8,7 +8,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'iti-lab2-dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh """
                     docker login --username ${USERNAME} --password ${PASSWORD}
-                    docker build -t ${USERNAME}/iti_lab-Bakehouse:${BUILD_NUMBER} .
+                    docker build -t ${USERNAME}/iti_lab-bakehouse:${BUILD_NUMBER} .
                 """
                 }
             }
